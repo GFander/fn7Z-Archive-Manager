@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fn7z 归档管理器</title>
+  <link rel="stylesheet" href="/app/fn7z/css/style.css">
+</head>
+<body>
+  <!-- 标题栏 -->
+  <header class="title-bar">
+    <span class="app-icon" aria-hidden="true">🗜</span>
+    <span class="app-title">fn7z 归档管理器</span>
+    <span class="title-hint">基于系统 7-Zip (7zz)</span>
+  </header>
+
+  <!-- 工具栏 -->
+  <nav class="toolbar" aria-label="工具栏">
+    <button id="btnBack" class="tool-btn" title="返回上一级" disabled>← 返回</button>
+    <span class="tool-sep"></span>
+    <button id="btnOpenArchive" class="tool-btn">打开压缩包</button>
+    <button id="btnExtract" class="tool-btn" disabled>解压</button>
+    <button id="btnCreate" class="tool-btn">压缩</button>
+    <button id="btnTest" class="tool-btn" disabled>测试</button>
+    <button id="btnDelete" class="tool-btn" disabled>删除</button>
+    <span class="tool-sep"></span>
+    <button id="btnRefresh" class="tool-btn">刷新</button>
+    <button id="btnHome" class="tool-btn">根目录</button>
+  </nav>
+
+  <!-- 双窗格文件浏览 -->
+  <div class="panes">
+    <!-- 左窗格 -->
+    <section id="paneLeft" class="pane active-pane">
+      <div class="pane-head">
+        <span class="pane-title">左窗格</span>
+        <span class="pane-path-icon" aria-hidden="true">📁</span>
+        <input class="pane-path" data-pane="left" type="text" placeholder="输入路径后回车（仅限已授权目录）" spellcheck="false">
+        <input class="pane-search" data-pane="left" type="text" placeholder="筛选..." aria-label="筛选">
+      </div>
+      <div class="pane-roots hidden"></div>
+      <div class="pane-body">
+        <table class="fileTable">
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" class="pane-select-all" data-pane="left" title="全选"></th>
+              <th>名称</th>
+              <th class="col-size">大小</th>
+              <th class="col-type">类型</th>
+              <th class="col-time">修改时间</th>
+            </tr>
+          </thead>
+          <tbody class="pane-list" data-pane="left">
+            <tr class="empty-row"><td colspan="5">加载中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 右窗格 -->
+    <section id="paneRight" class="pane">
+      <div class="pane-head">
+        <span class="pane-title">右窗格</span>
+        <span class="pane-path-icon" aria-hidden="true">📁</span>
+        <input class="pane-path" data-pane="right" type="text" placeholder="输入路径后回车（仅限已授权目录）" spellcheck="false">
+        <input class="pane-search" data-pane="right" type="text" placeholder="筛选..." aria-label="筛选">
+      </div>
+      <div class="pane-roots hidden"></div>
+      <div class="pane-body">
+        <table class="fileTable">
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" class="pane-select-all" data-pane="right" title="全选"></th>
+              <th>名称</th>
+              <th class="col-size">大小</th>
+              <th class="col-type">类型</th>
+              <th class="col-time">修改时间</th>
+            </tr>
+          </thead>
+          <tbody class="pane-list" data-pane="right">
+            <tr class="empty-row"><td colspan="5">加载中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- 状态栏 -->
+  <footer class="status-bar">
+    <span id="statusInfo">就绪</span>
+    <span id="paneHint" class="status-middle"></span>
+    <span id="userInfo" class="status-right"></span>
+  </footer>
+
+  <!-- 通用模态框 -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modalTitle">操作</h3>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn-plain">取消</button>
+        <button id="modalConfirm" class="btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- 操作进度 -->
+  <div id="progressOverlay" class="progress-overlay hidden">
+    <div class="progress-card">
+      <div class="progress-title" id="progressTitle">正在处理...</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div class="progress-text">
+        <span id="progressPercent">0%</span>
+        <span id="progressHint" class="progress-hint"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app/fn7z/js/app.js"></script>
+</body>
+</html>

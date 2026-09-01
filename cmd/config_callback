@@ -1,0 +1,13 @@
+#!/bin/bash
+# 配置变更后：重启服务，使 TRIM_DATA_ACCESSIBLE_PATHS 等新环境变量生效（可重复执行）
+mkdir -p "${TRIM_PKGVAR}" "${TRIM_PKGETC}"
+
+APP_ROOT="/var/apps/${TRIM_APPNAME:-fn7z}"
+if [ -x "${APP_ROOT}/cmd/main" ]; then
+    "${APP_ROOT}/cmd/main" restart >> "${TRIM_PKGVAR}/server.log" 2>&1
+fi
+exit 0
+
+### This script is called after the user change environment variables in application setting page.
+
+exit 0

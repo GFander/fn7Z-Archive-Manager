@@ -1,0 +1,14 @@
+appname=fn7z
+version=1.0.10
+display_name=fn7z 归档管理器
+desc=基于系统 7-Zip（7zz）的归档文件管理器，支持浏览、解压、压缩、测试与删除等操作。
+platform=all
+source=thirdparty
+maintainer=fn7z Developers
+distributor=fn7z Developers
+desktop_uidir=ui
+desktop_applaunchname=fn7z.main
+install_dep_apps=nodejs_v22
+os_min_version=1.1.3100
+ctl_stop=true
+checkport=false

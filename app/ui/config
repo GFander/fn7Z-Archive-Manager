@@ -1,0 +1,14 @@
+{
+    ".url": {
+        "fn7z.main": {
+            "title": "fn7z 归档管理器",
+            "icon": "images/icon_{0}.png",
+            "type": "iframe",
+            "protocol": "",
+            "gatewayPrefix": "/app/fn7z",
+            "gatewaySocket": "app.sock",
+            "url": "/app/fn7z",
+            "allUsers": true
+        }
+    }
+}

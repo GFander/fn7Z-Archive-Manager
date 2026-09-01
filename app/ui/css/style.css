@@ -1,0 +1,586 @@
+:root {
+  --fn-primary: #1a73e8;
+  --fn-primary-hover: #1557b0;
+  --fn-primary-soft: rgba(26, 115, 232, 0.08);
+  --fn-bg: #f5f7fa;
+  --fn-surface: #ffffff;
+  --fn-text: #202124;
+  --fn-text-secondary: #5f6368;
+  --fn-border: #dadce0;
+  --fn-radius: 8px;
+  --fn-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --fn-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", Roboto, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--fn-font);
+  background: var(--fn-bg);
+  color: var(--fn-text);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* ---------- 标题栏 ---------- */
+.title-bar {
+  background: var(--fn-surface);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.app-icon {
+  font-size: 20px;
+}
+
+.app-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.title-hint {
+  font-size: 12px;
+  color: var(--fn-text-secondary);
+}
+
+/* ---------- 工具栏 ---------- */
+.toolbar {
+  background: var(--fn-surface);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  background: transparent;
+  border: none;
+  padding: 7px 13px;
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  color: var(--fn-text);
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.tool-btn:hover:not(:disabled) {
+  background: var(--fn-primary-soft);
+}
+
+.tool-btn:active:not(:disabled) {
+  background: rgba(26, 115, 232, 0.16);
+}
+
+.tool-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tool-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--fn-border);
+  margin: 0 6px;
+}
+
+/* ---------- 地址栏 ---------- */
+.address-bar {
+  background: var(--fn-surface);
+  padding: 8px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+}
+
+.path-icon {
+  font-size: 16px;
+}
+
+#pathInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--fn-border);
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  outline: none;
+  background: #fafbfc;
+}
+
+#pathInput:focus {
+  border-color: var(--fn-primary);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+}
+
+#searchInput {
+  width: 220px;
+  padding: 8px 12px;
+  border: 1px solid var(--fn-border);
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  outline: none;
+  background: #fafbfc;
+}
+
+#searchInput:focus {
+  border-color: var(--fn-primary);
+  background: #fff;
+}
+
+/* ---------- 根目录快速入口 ---------- */
+.roots-bar {
+  background: var(--fn-surface);
+  padding: 8px 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+}
+
+.root-chip {
+  padding: 5px 12px;
+  border: 1px solid var(--fn-border);
+  border-radius: 999px;
+  background: #f8f9fa;
+  font-size: 12px;
+  color: var(--fn-text);
+  cursor: pointer;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.root-chip:hover {
+  background: var(--fn-primary-soft);
+  border-color: var(--fn-primary);
+}
+
+/* ---------- 双窗格 ---------- */
+.panes {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--fn-surface);
+  border-right: 1px solid var(--fn-border);
+  transition: opacity 0.18s;
+  position: relative;
+}
+
+.pane:last-child {
+  border-right: none;
+}
+
+/* 非活动窗格：灰色遮罩 */
+.pane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(120, 130, 145, 0.28);
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+
+.pane.inactive-pane::after {
+  opacity: 1;
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+}
+
+.pane-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fn-text-secondary);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.pane-path {
+  flex: 1;
+  min-width: 60px;
+  padding: 6px 10px;
+  border: 1px solid var(--fn-border);
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  outline: none;
+  background: #fafbfc;
+}
+
+.pane-path:focus {
+  border-color: var(--fn-primary);
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+}
+
+.pane-search {
+  width: 150px;
+  padding: 6px 10px;
+  border: 1px solid var(--fn-border);
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  outline: none;
+  background: #fafbfc;
+}
+
+.pane-search:focus {
+  border-color: var(--fn-primary);
+  background: #fff;
+}
+
+.pane-roots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--fn-border);
+  flex-shrink: 0;
+}
+
+.pane-roots.hidden {
+  display: none;
+}
+
+.pane-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+/* 拖放目标高亮 */
+.pane.drop-target .pane-body {
+  background: rgba(26, 115, 232, 0.06);
+}
+
+tr.drag-over td {
+  background: rgba(26, 115, 232, 0.18);
+}
+
+/* ---------- 文件列表 ---------- */
+.fileTable {
+  background: var(--fn-surface);
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.fileTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--fn-border);
+  font-weight: 500;
+  color: var(--fn-text-secondary);
+  white-space: nowrap;
+}
+
+.fileTable td {
+  padding: 7px 12px;
+  border-bottom: 1px solid #f0f1f3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileTable tbody tr {
+  cursor: default;
+}
+
+.fileTable tbody tr:hover {
+  background: rgba(26, 115, 232, 0.05);
+}
+
+.fileTable tbody tr.selected {
+  background: rgba(26, 115, 232, 0.10);
+}
+
+.col-check {
+  width: 36px;
+}
+
+.col-size {
+  width: 110px;
+  text-align: right;
+}
+
+.col-type {
+  width: 90px;
+}
+
+.col-time {
+  width: 170px;
+}
+
+.file-icon {
+  margin-right: 6px;
+}
+
+.file-name {
+  font-weight: 500;
+}
+
+.folder-row td {
+  color: #1a73e8;
+}
+
+.empty-row td {
+  text-align: center;
+  color: var(--fn-text-secondary);
+  padding: 32px 0;
+}
+
+/* ---------- 状态栏 ---------- */
+.status-bar {
+  background: var(--fn-surface);
+  padding: 6px 16px;
+  border-top: 1px solid var(--fn-border);
+  font-size: 12px;
+  color: var(--fn-text-secondary);
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-middle {
+  flex: 1;
+  text-align: center;
+  color: var(--fn-text-secondary);
+}
+
+.status-right {
+  flex-shrink: 0;
+}
+
+/* ---------- 模态框 ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--fn-surface);
+  border-radius: 12px;
+  padding: 24px;
+  width: min(520px, calc(100vw - 48px));
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--fn-text-secondary);
+  margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--fn-border);
+  border-radius: var(--fn-radius);
+  font-size: 13px;
+  outline: none;
+  background: #fafbfc;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--fn-primary);
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-plain {
+  padding: 8px 24px;
+  border-radius: var(--fn-radius);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background: var(--fn-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--fn-primary-hover);
+}
+
+.btn-plain {
+  background: #e8eaed;
+  color: var(--fn-text);
+}
+
+.btn-plain:hover {
+  background: #dcdee1;
+}
+
+.hint-text {
+  font-size: 12px;
+  color: var(--fn-text-secondary);
+  margin-top: 4px;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #323639;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 2000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  max-width: 80vw;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast.error {
+  background: #c5221f;
+}
+
+/* ---------- 操作进度条 ---------- */
+.progress-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.progress-overlay.hidden {
+  display: none;
+}
+
+.progress-card {
+  background: var(--fn-surface);
+  border-radius: 12px;
+  padding: 24px 28px;
+  width: min(480px, calc(100vw - 48px));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.progress-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.progress-track {
+  height: 8px;
+  background: #e8eaed;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #1a73e8, #4d9fff);
+  border-radius: 999px;
+  transition: width 0.15s linear;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--fn-text-secondary);
+}
+
+.progress-hint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}

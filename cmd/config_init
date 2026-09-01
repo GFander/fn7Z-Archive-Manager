@@ -1,0 +1,7 @@
+#!/bin/bash
+# 配置变更前（可重复执行）
+exit 0
+
+### This script is called before the user change environment variables in application setting page.
+
+exit 0

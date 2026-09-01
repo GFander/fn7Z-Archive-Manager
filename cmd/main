@@ -1,0 +1,121 @@
+#!/bin/bash
+
+LOG_FILE="${TRIM_PKGVAR}/server.log"
+PID_FILE="${TRIM_PKGVAR}/server.pid"
+SOCKET_PATH="${TRIM_APPDEST}/app.sock"
+SERVER_DIR="${TRIM_APPDEST}/server"
+
+# 使用 fnOS 提供的 Node.js 运行时
+export PATH=/var/apps/nodejs_v22/target/bin:$PATH
+
+log_msg() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "${LOG_FILE}"
+}
+
+check_process() {
+    local pid="$1"
+    [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
+}
+
+is_running() {
+    if [ -f "${PID_FILE}" ]; then
+        local pid
+        pid="$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')"
+        if check_process "$pid"; then
+            return 0
+        fi
+        rm -f "${PID_FILE}"
+    fi
+    return 1
+}
+
+start_app() {
+    if is_running; then
+        return 0
+    fi
+
+    if [ ! -d "${SERVER_DIR}" ]; then
+        echo "服务器目录不存在：${SERVER_DIR}" > "${TRIM_TEMP_LOGFILE}"
+        return 1
+    fi
+
+    if ! command -v node >/dev/null 2>&1; then
+        echo "未找到 Node.js 运行时，请确认已安装 nodejs_v22 依赖" > "${TRIM_TEMP_LOGFILE}"
+        return 1
+    fi
+
+    log_msg "Starting fn7z server ..."
+    rm -f "${SOCKET_PATH}"
+
+    cd "${SERVER_DIR}" || return 1
+    nohup node server.js >> "${LOG_FILE}" 2>&1 &
+    echo $! > "${PID_FILE}"
+
+    local count=0
+    while [ $count -lt 10 ]; do
+        if [ -S "${SOCKET_PATH}" ]; then
+            log_msg "fn7z server is listening on ${SOCKET_PATH}"
+            return 0
+        fi
+        if ! check_process "$(cat "${PID_FILE}" 2>/dev/null)"; then
+            echo "fn7z 服务启动失败，请查看日志：${LOG_FILE}" > "${TRIM_TEMP_LOGFILE}"
+            rm -f "${PID_FILE}"
+            return 1
+        fi
+        sleep 1
+        count=$((count + 1))
+    done
+
+    echo "fn7z 服务启动超时，请查看日志：${LOG_FILE}" > "${TRIM_TEMP_LOGFILE}"
+    return 1
+}
+
+stop_app() {
+    if [ ! -f "${PID_FILE}" ]; then
+        rm -f "${SOCKET_PATH}"
+        return 0
+    fi
+
+    local pid
+    pid="$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')"
+    if check_process "$pid"; then
+        log_msg "Stopping fn7z server (pid ${pid}) ..."
+        kill -TERM "$pid" 2>/dev/null || true
+
+        local count=0
+        while check_process "$pid" && [ $count -lt 10 ]; do
+            sleep 1
+            count=$((count + 1))
+        done
+
+        if check_process "$pid"; then
+            kill -KILL "$pid" 2>/dev/null || true
+        fi
+    fi
+
+    rm -f "${PID_FILE}" "${SOCKET_PATH}"
+    return 0
+}
+
+case "$1" in
+start)
+    start_app
+    ;;
+stop)
+    stop_app
+    ;;
+restart)
+    stop_app
+    start_app
+    ;;
+status)
+    if is_running; then
+        exit 0
+    fi
+    exit 3
+    ;;
+*)
+    echo "Unknown command: $1" > "${TRIM_TEMP_LOGFILE}"
+    exit 1
+    ;;
+esac

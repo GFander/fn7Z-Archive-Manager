@@ -1,0 +1,9 @@
+#!/bin/bash
+# 安装后初始化（可重复执行）
+mkdir -p "${TRIM_PKGVAR}" "${TRIM_PKGETC}"
+chmod +x "${TRIM_APPDEST}/server/server.js" 2>/dev/null || true
+exit 0
+
+### This script is called after the user installs the application.
+
+exit 0

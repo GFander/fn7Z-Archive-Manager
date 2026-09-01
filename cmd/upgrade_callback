@@ -1,0 +1,8 @@
+#!/bin/bash
+# 升级后处理（可重复执行）
+mkdir -p "${TRIM_PKGVAR}" "${TRIM_PKGETC}"
+exit 0
+
+### This script is called after the user upgrades the application.
+
+exit 0

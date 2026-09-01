@@ -1,0 +1,11 @@
+#!/bin/bash
+# 卸载后清理（可重复执行；默认保留共享数据）
+DATA_ACTION="${wizard_data_action:-keep}"
+if [ "$DATA_ACTION" = "delete" ]; then
+    rm -rf "${TRIM_PKGVAR}"
+fi
+exit 0
+
+### This script is called after the user uninstalls the application.
+
+exit 0

@@ -1,0 +1,7 @@
+#!/bin/bash
+# 安装前准备（可重复执行）
+exit 0
+
+### This script is called before the user installs the application.
+
+exit 0

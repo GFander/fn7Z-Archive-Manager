@@ -1,0 +1,11 @@
+[
+    {
+        "stepTitle": "升级说明",
+        "items": [
+            {
+                "type": "tips",
+                "helpText": "fn7z 正在升级。升级不会删除您的共享数据。"
+            }
+        ]
+    }
+]
